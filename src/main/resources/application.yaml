@@ -1,0 +1,22 @@
+logging:
+   level:
+      .: error
+      org.springframework: ERROR
+      com.mkyong: ERROR
+spring:
+   datasource:
+      driver-class-name: org.h2.Driver
+      username: sa
+      password: 
+      testWhileIdle: true
+      url: jdbc:h2:file:~/smartgrid  
+      validationQuery: SELECT 1
+   jpa:
+      generate:-ddl: true
+      hibernate:
+         ddl-auto: none
+      database-platform: org.hibernate.dialect.H2Dialect
+security:
+   jwt:
+      token: secret-key
+      expire-length: 3600000
