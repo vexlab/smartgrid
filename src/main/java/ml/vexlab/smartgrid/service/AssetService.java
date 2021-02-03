@@ -1,18 +1,16 @@
 package ml.vexlab.smartgrid.service;
 
 import java.util.List;
-
 import ml.vexlab.smartgrid.transport.dto.AssetDTO;
 import ml.vexlab.smartgrid.transport.dto.GenericDataDTO;
 
 public interface AssetService {
-	
-	GenericDataDTO create(AssetDTO assetDTO);
 
-	List<GenericDataDTO> getAll();
+  GenericDataDTO create(AssetDTO assetDTO);
 
-	AssetDTO get(String assetId);
+  List<GenericDataDTO> getAll();
 
-	GenericDataDTO delete(String assetId);
+  AssetDTO get(String assetId);
 
+  GenericDataDTO delete(String assetId);
 }

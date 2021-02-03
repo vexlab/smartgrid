@@ -3,7 +3,6 @@ package ml.vexlab.smartgrid.entity;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -11,102 +10,97 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.GenericGenerator;
-
 import ml.vexlab.smartgrid.enums.Role;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 public class UserEntity {
-	@Id
-	@GeneratedValue(generator = "UUID")
-	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-	@Column(name = "id", updatable = true, nullable = false)
-	private UUID id;
-	@Column
-	private String firstName;
-	@Column
-	private String lastName;
+  @Id
+  @GeneratedValue(generator = "UUID")
+  @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+  @Column(name = "id", updatable = true, nullable = false)
+  private UUID id;
 
-	@Size(min = 4, max = 255, message = "Minimum username length: 4 characters")
-	@Column(unique = true, nullable = false)
-	private String username;
+  @Column private String firstName;
+  @Column private String lastName;
 
-	@Column(unique = true, nullable = false)
-	private String email;
-	
-	@Column
-	private Date lastLogin;
+  @Size(min = 4, max = 255, message = "Minimum username length: 4 characters")
+  @Column(unique = true, nullable = false)
+  private String username;
 
-	@Size(min = 8, message = "Minimum password length: 8 characters")
-	@Column(nullable = false)
-	private String password;
+  @Column(unique = true, nullable = false)
+  private String email;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	List<Role> roles;
+  @Column private Date lastLogin;
 
-	public UUID getId() {
-		return id;
-	}
+  @Size(min = 8, message = "Minimum password length: 8 characters")
+  @Column(nullable = false)
+  private String password;
 
-	public void setId(UUID id) {
-		this.id = id;
-	}
+  @ElementCollection(fetch = FetchType.EAGER)
+  List<Role> roles;
 
-	public String getFirstName() {
-		return firstName;
-	}
+  public UUID getId() {
+    return id;
+  }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+  public void setId(UUID id) {
+    this.id = id;
+  }
 
-	public String getLastName() {
-		return lastName;
-	}
+  public String getFirstName() {
+    return firstName;
+  }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
 
-	public String getUsername() {
-		return username;
-	}
+  public String getLastName() {
+    return lastName;
+  }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
 
-	public String getEmail() {
-		return email;
-	}
+  public String getUsername() {
+    return username;
+  }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-	public Date getLastLogin() {
-		return lastLogin;
-	}
+  public String getEmail() {
+    return email;
+  }
 
-	public void setLastLogin(Date lastLogin) {
-		this.lastLogin = lastLogin;
-	}
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-	public String getPassword() {
-		return password;
-	}
+  public Date getLastLogin() {
+    return lastLogin;
+  }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+  public void setLastLogin(Date lastLogin) {
+    this.lastLogin = lastLogin;
+  }
 
-	public List<Role> getRoles() {
-		return roles;
-	}
+  public String getPassword() {
+    return password;
+  }
 
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
-	}
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
+  public List<Role> getRoles() {
+    return roles;
+  }
+
+  public void setRoles(List<Role> roles) {
+    this.roles = roles;
+  }
 }
