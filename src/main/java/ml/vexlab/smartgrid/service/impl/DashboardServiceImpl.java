@@ -69,7 +69,7 @@ public class DashboardServiceImpl implements DashboardService {
   public GenericDataDTO delete(String dashboardId) {
     UUID id = UUID.fromString(dashboardId);
     Optional<Dashboard> d = dashboardRepository.findById(id);
-    if (d != null) {
+    if (d.isPresent()) {
       dashboardRepository.delete(d.get());
       return new GenericDataDTO.Builder().id(dashboardId).display("Dashboard deleted.").build();
     }
@@ -104,7 +104,7 @@ public class DashboardServiceImpl implements DashboardService {
   public DashboardDTO get(String dashboardId) {
     UUID id = UUID.fromString(dashboardId);
     Optional<Dashboard> d = dashboardRepository.findById(id);
-    if (d != null) {
+    if (d.isPresent()) {
       Dashboard dashboard = d.get();
       return new DashboardDTO.Builder()
           .id(dashboardId)
