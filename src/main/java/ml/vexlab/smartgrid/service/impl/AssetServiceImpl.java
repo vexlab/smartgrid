@@ -8,21 +8,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-
 import ml.vexlab.smartgrid.entity.Asset;
 import ml.vexlab.smartgrid.entity.AssetType;
 import ml.vexlab.smartgrid.entity.Customer;
@@ -35,9 +26,15 @@ import ml.vexlab.smartgrid.repository.DeviceRepository;
 import ml.vexlab.smartgrid.service.AssetService;
 import ml.vexlab.smartgrid.transport.dto.AssetDTO;
 import ml.vexlab.smartgrid.transport.dto.GenericDataDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 @Service(value = "assetService")
-@CacheConfig(cacheNames={"asset"})
+@CacheConfig(cacheNames = {"asset"})
 public class AssetServiceImpl implements AssetService {
 
   @Autowired private AssetRepository assetRepository;

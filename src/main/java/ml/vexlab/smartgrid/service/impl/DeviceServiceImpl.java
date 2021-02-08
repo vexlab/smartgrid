@@ -8,21 +8,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-
 import ml.vexlab.smartgrid.entity.Alarm;
 import ml.vexlab.smartgrid.entity.Asset;
 import ml.vexlab.smartgrid.entity.Device;
@@ -35,9 +26,15 @@ import ml.vexlab.smartgrid.repository.DeviceTypeRepository;
 import ml.vexlab.smartgrid.service.DeviceService;
 import ml.vexlab.smartgrid.transport.dto.DeviceDTO;
 import ml.vexlab.smartgrid.transport.dto.GenericDataDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 @Service(value = "deviceService")
-@CacheConfig(cacheNames={"device"})
+@CacheConfig(cacheNames = {"device"})
 public class DeviceServiceImpl implements DeviceService {
 
   @Autowired private DeviceRepository deviceRepository;
