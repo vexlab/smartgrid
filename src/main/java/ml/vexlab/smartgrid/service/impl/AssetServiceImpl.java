@@ -8,12 +8,21 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
 import ml.vexlab.smartgrid.entity.Asset;
 import ml.vexlab.smartgrid.entity.AssetType;
 import ml.vexlab.smartgrid.entity.Customer;
@@ -26,11 +35,9 @@ import ml.vexlab.smartgrid.repository.DeviceRepository;
 import ml.vexlab.smartgrid.service.AssetService;
 import ml.vexlab.smartgrid.transport.dto.AssetDTO;
 import ml.vexlab.smartgrid.transport.dto.GenericDataDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 @Service(value = "assetService")
+@CacheConfig(cacheNames={"asset"})
 public class AssetServiceImpl implements AssetService {
 
   @Autowired private AssetRepository assetRepository;
@@ -39,7 +46,7 @@ public class AssetServiceImpl implements AssetService {
   @Autowired private CustomerRepository customerRepository;
   @Autowired EntityManager entityManager;
 
-  @Override
+  @CachePut
   public GenericDataDTO create(AssetDTO assetDTO) {
     if (assetDTO.getCustomer() == null) {
       throw new CustomException("Customer not found.", HttpStatus.NOT_FOUND);
@@ -90,7 +97,7 @@ public class AssetServiceImpl implements AssetService {
         .build();
   }
 
-  @Override
+  @Cacheable
   public List<GenericDataDTO> getAll() {
     List<GenericDataDTO> dtos = new ArrayList<GenericDataDTO>();
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -119,11 +126,10 @@ public class AssetServiceImpl implements AssetService {
     return dtos;
   }
 
-  @Override
   public AssetDTO get(String assetId) {
     UUID id = UUID.fromString(assetId);
     Optional<Asset> a = assetRepository.findById(id);
-    if (a != null) {
+    if (a.isPresent()) {
       Asset asset = a.get();
       return new AssetDTO.Builder()
           .id(assetId)
@@ -145,11 +151,10 @@ public class AssetServiceImpl implements AssetService {
     throw new CustomException("Asset not found.", HttpStatus.NOT_FOUND);
   }
 
-  @Override
   public GenericDataDTO delete(String assetId) {
     UUID id = UUID.fromString(assetId);
     Optional<Asset> a = assetRepository.findById(id);
-    if (a != null) {
+    if (a.isPresent()) {
       assetRepository.delete(a.get());
       return new GenericDataDTO.Builder().id(assetId).display("Asset deleted.").build();
     }

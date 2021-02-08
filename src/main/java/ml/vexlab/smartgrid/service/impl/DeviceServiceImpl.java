@@ -8,12 +8,21 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
 import ml.vexlab.smartgrid.entity.Alarm;
 import ml.vexlab.smartgrid.entity.Asset;
 import ml.vexlab.smartgrid.entity.Device;
@@ -26,11 +35,9 @@ import ml.vexlab.smartgrid.repository.DeviceTypeRepository;
 import ml.vexlab.smartgrid.service.DeviceService;
 import ml.vexlab.smartgrid.transport.dto.DeviceDTO;
 import ml.vexlab.smartgrid.transport.dto.GenericDataDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 @Service(value = "deviceService")
+@CacheConfig(cacheNames={"device"})
 public class DeviceServiceImpl implements DeviceService {
 
   @Autowired private DeviceRepository deviceRepository;
@@ -39,7 +46,7 @@ public class DeviceServiceImpl implements DeviceService {
   @Autowired private AlarmRepository alarmRepository;
   @Autowired EntityManager entityManager;
 
-  @Override
+  @CachePut
   public GenericDataDTO create(DeviceDTO deviceDTO) {
     if (deviceDTO.getAsset() == null) {
       return new GenericDataDTO.Builder().display("Asset not found.").error(true).build();
@@ -102,7 +109,7 @@ public class DeviceServiceImpl implements DeviceService {
   public DeviceDTO get(String deviceId) {
     UUID id = UUID.fromString(deviceId);
     Optional<Device> d = deviceRepository.findById(id);
-    if (d != null) {
+    if (d.isPresent()) {
       Device device = d.get();
       return new DeviceDTO.Builder()
           .id(deviceId)
@@ -119,18 +126,17 @@ public class DeviceServiceImpl implements DeviceService {
     throw new CustomException("Device not found.", HttpStatus.NOT_FOUND);
   }
 
-  @Override
   public GenericDataDTO delete(String deviceId) {
     UUID id = UUID.fromString(deviceId);
     Optional<Device> d = deviceRepository.findById(id);
-    if (d != null) {
+    if (d.isPresent()) {
       deviceRepository.delete(d.get());
       return new GenericDataDTO.Builder().id(deviceId).display("Dashboard deleted.").build();
     }
     throw new CustomException("Device not found.", HttpStatus.NOT_FOUND);
   }
 
-  @Override
+  @Cacheable
   public List<GenericDataDTO> getAll() {
     List<GenericDataDTO> dtos = new ArrayList<GenericDataDTO>();
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();

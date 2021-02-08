@@ -5,12 +5,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
 import ml.vexlab.smartgrid.entity.Alarm;
 import ml.vexlab.smartgrid.entity.Device;
 import ml.vexlab.smartgrid.enums.AlarmType;
@@ -20,18 +29,16 @@ import ml.vexlab.smartgrid.repository.DeviceRepository;
 import ml.vexlab.smartgrid.service.AlarmService;
 import ml.vexlab.smartgrid.transport.dto.AlarmDTO;
 import ml.vexlab.smartgrid.transport.dto.GenericDataDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 @Service(value = "alarmService")
+@CacheConfig(cacheNames={"alarm"})
 public class AlarmServiceImpl implements AlarmService {
 
   @Autowired private AlarmRepository alarmRepository;
   @Autowired private DeviceRepository deviceRepository;
   @Autowired EntityManager entityManager;
 
-  @Override
+  @Cacheable
   public List<GenericDataDTO> getAll() {
     List<GenericDataDTO> dtos = new ArrayList<GenericDataDTO>();
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -59,18 +66,17 @@ public class AlarmServiceImpl implements AlarmService {
     return dtos;
   }
 
-  @Override
   public GenericDataDTO delete(String alarmId) {
     UUID id = UUID.fromString(alarmId);
     Optional<Alarm> a = alarmRepository.findById(id);
-    if (a != null) {
+    if (a.isPresent()) {
       alarmRepository.delete(a.get());
       return new GenericDataDTO.Builder().id(alarmId).display("Alarm deleted.").build();
     }
     throw new CustomException("Alarm not found.", HttpStatus.NOT_FOUND);
   }
 
-  @Override
+  @CachePut
   public GenericDataDTO create(AlarmDTO alarmDTO) {
     if (alarmDTO.getDevice() == null) {
       throw new CustomException("Device not found.", HttpStatus.NOT_FOUND);
@@ -106,11 +112,10 @@ public class AlarmServiceImpl implements AlarmService {
         .build();
   }
 
-  @Override
   public AlarmDTO get(String alarmId) {
     UUID id = UUID.fromString(alarmId);
     Optional<Alarm> a = alarmRepository.findById(id);
-    if (a != null) {
+    if (a.isPresent()) {
       Alarm alarm = a.get();
       return new AlarmDTO.Builder()
           .id(alarmId)

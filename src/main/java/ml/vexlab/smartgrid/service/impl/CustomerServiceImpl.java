@@ -14,6 +14,12 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import ml.vexlab.smartgrid.entity.Asset;
 import ml.vexlab.smartgrid.entity.Customer;
 import ml.vexlab.smartgrid.entity.Dashboard;
@@ -24,11 +30,9 @@ import ml.vexlab.smartgrid.repository.DashboardRepository;
 import ml.vexlab.smartgrid.service.CustomerService;
 import ml.vexlab.smartgrid.transport.dto.CustomerDTO;
 import ml.vexlab.smartgrid.transport.dto.GenericDataDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 @Service(value = "customerService")
+@CacheConfig(cacheNames={"customer"})
 public class CustomerServiceImpl implements CustomerService {
 
   @Autowired private AssetRepository assetRepository;
@@ -36,6 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
   @Autowired private CustomerRepository customerRepository;
   @Autowired EntityManager entityManager;
 
+  @CacheEvict(key = "#customer") 
   public GenericDataDTO create(CustomerDTO customerDTO) {
     Customer c = new Customer();
     if (customerDTO.getId() != null) {
@@ -83,11 +88,10 @@ public class CustomerServiceImpl implements CustomerService {
         .build();
   }
 
-  @Override
   public GenericDataDTO delete(String customerId) {
     UUID id = UUID.fromString(customerId);
     Optional<Customer> c = customerRepository.findById(id);
-    if (c != null) {
+    if (c.isPresent()) {
       customerRepository.delete(c.get());
       return new GenericDataDTO.Builder().id(customerId).display("Customer deleted.").build();
     }
@@ -98,7 +102,7 @@ public class CustomerServiceImpl implements CustomerService {
         .build();
   }
 
-  @Override
+  @Cacheable
   public List<GenericDataDTO> getAll() {
     List<GenericDataDTO> dtos = new ArrayList<GenericDataDTO>();
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -137,11 +141,10 @@ public class CustomerServiceImpl implements CustomerService {
     return dtos;
   }
 
-  @Override
   public CustomerDTO get(String customerId) {
     UUID id = UUID.fromString(customerId);
     Optional<Customer> c = customerRepository.findById(id);
-    if (c != null) {
+    if (c.isPresent()) {
       Customer customer = c.get();
       return new CustomerDTO.Builder()
           .id(customerId)
