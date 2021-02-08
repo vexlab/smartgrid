@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
@@ -13,14 +12,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-
 import ml.vexlab.smartgrid.entity.Device;
 import ml.vexlab.smartgrid.entity.History;
 import ml.vexlab.smartgrid.entity.Snapshot;
@@ -32,9 +23,15 @@ import ml.vexlab.smartgrid.service.TelemetryService;
 import ml.vexlab.smartgrid.transport.dto.GenericDataDTO;
 import ml.vexlab.smartgrid.transport.dto.TelemetryDTO;
 import ml.vexlab.smartgrid.transport.dto.TelemetryRequestDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 @Service(value = "telemetryService")
-@CacheConfig(cacheNames={"telemetry"})
+@CacheConfig(cacheNames = {"telemetry"})
 public class TelemetryServiceImpl implements TelemetryService {
 
   @Autowired private DeviceRepository deviceRepository;
@@ -85,7 +82,7 @@ public class TelemetryServiceImpl implements TelemetryService {
     }
     throw new CustomException("Data error.", HttpStatus.NOT_FOUND);
   }
-  
+
   @CachePut
   public GenericDataDTO create(List<TelemetryDTO> telemetryDTOList) {
     boolean onError = true;

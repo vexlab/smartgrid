@@ -5,21 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-
 import ml.vexlab.smartgrid.entity.Customer;
 import ml.vexlab.smartgrid.entity.Dashboard;
 import ml.vexlab.smartgrid.exception.CustomException;
@@ -28,9 +19,15 @@ import ml.vexlab.smartgrid.repository.DashboardRepository;
 import ml.vexlab.smartgrid.service.DashboardService;
 import ml.vexlab.smartgrid.transport.dto.DashboardDTO;
 import ml.vexlab.smartgrid.transport.dto.GenericDataDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 @Service(value = "dashboardService")
-@CacheConfig(cacheNames={"dashboard"})
+@CacheConfig(cacheNames = {"dashboard"})
 public class DashboardServiceImpl implements DashboardService {
 
   @Autowired private DashboardRepository dashboardRepository;
