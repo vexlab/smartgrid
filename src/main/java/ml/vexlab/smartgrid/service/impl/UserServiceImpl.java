@@ -3,6 +3,13 @@ package ml.vexlab.smartgrid.service.impl;
 import java.util.Arrays;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import ml.vexlab.smartgrid.entity.UserEntity;
 import ml.vexlab.smartgrid.enums.Role;
 import ml.vexlab.smartgrid.exception.CustomException;
@@ -11,18 +18,8 @@ import ml.vexlab.smartgrid.security.JwtTokenProvider;
 import ml.vexlab.smartgrid.service.UserService;
 import ml.vexlab.smartgrid.transport.dto.TokenDTO;
 import ml.vexlab.smartgrid.transport.dto.UserDataDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service(value = "userService")
-@CacheConfig(cacheNames = {"user"})
 public class UserServiceImpl implements UserService {
 
   @Autowired private UserRepository userRepository;
@@ -48,7 +45,6 @@ public class UserServiceImpl implements UserService {
     }
   }
 
-  @CachePut
   public TokenDTO signup(UserDataDTO userDTO) {
     if (userDTO.getUsername() != null && !userRepository.existsByUsername(userDTO.getUsername())) {
       UserEntity user = new UserEntity();

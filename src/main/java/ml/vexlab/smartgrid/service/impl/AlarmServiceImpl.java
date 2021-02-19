@@ -11,6 +11,12 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import ml.vexlab.smartgrid.entity.Alarm;
 import ml.vexlab.smartgrid.entity.Device;
 import ml.vexlab.smartgrid.enums.AlarmType;
@@ -20,22 +26,15 @@ import ml.vexlab.smartgrid.repository.DeviceRepository;
 import ml.vexlab.smartgrid.service.AlarmService;
 import ml.vexlab.smartgrid.transport.dto.AlarmDTO;
 import ml.vexlab.smartgrid.transport.dto.GenericDataDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 @Service(value = "alarmService")
-@CacheConfig(cacheNames = {"alarm"})
 public class AlarmServiceImpl implements AlarmService {
 
   @Autowired private AlarmRepository alarmRepository;
   @Autowired private DeviceRepository deviceRepository;
   @Autowired EntityManager entityManager;
 
-  @Cacheable
+  @Cacheable(value = "alarm", key="#id")
   public List<GenericDataDTO> getAll() {
     List<GenericDataDTO> dtos = new ArrayList<GenericDataDTO>();
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -63,6 +62,7 @@ public class AlarmServiceImpl implements AlarmService {
     return dtos;
   }
 
+  @CacheEvict(value = "alarm", key = "#id")
   public GenericDataDTO delete(String alarmId) {
     UUID id = UUID.fromString(alarmId);
     Optional<Alarm> a = alarmRepository.findById(id);
@@ -73,7 +73,7 @@ public class AlarmServiceImpl implements AlarmService {
     throw new CustomException("Alarm not found.", HttpStatus.NOT_FOUND);
   }
 
-  @CachePut
+  @CachePut(value = "alarm", key="#id")
   public GenericDataDTO create(AlarmDTO alarmDTO) {
     if (alarmDTO.getDevice() == null) {
       throw new CustomException("Device not found.", HttpStatus.NOT_FOUND);
