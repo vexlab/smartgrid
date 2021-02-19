@@ -12,9 +12,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import ml.vexlab.smartgrid.entity.Device;
 import ml.vexlab.smartgrid.entity.History;
 import ml.vexlab.smartgrid.entity.Snapshot;
@@ -26,6 +23,9 @@ import ml.vexlab.smartgrid.service.TelemetryService;
 import ml.vexlab.smartgrid.transport.dto.GenericDataDTO;
 import ml.vexlab.smartgrid.transport.dto.TelemetryDTO;
 import ml.vexlab.smartgrid.transport.dto.TelemetryRequestDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 @Service(value = "telemetryService")
 public class TelemetryServiceImpl implements TelemetryService {

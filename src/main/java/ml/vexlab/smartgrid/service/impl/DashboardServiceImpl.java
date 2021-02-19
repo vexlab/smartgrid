@@ -11,12 +11,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import ml.vexlab.smartgrid.entity.Customer;
 import ml.vexlab.smartgrid.entity.Dashboard;
 import ml.vexlab.smartgrid.exception.CustomException;
@@ -25,6 +19,12 @@ import ml.vexlab.smartgrid.repository.DashboardRepository;
 import ml.vexlab.smartgrid.service.DashboardService;
 import ml.vexlab.smartgrid.transport.dto.DashboardDTO;
 import ml.vexlab.smartgrid.transport.dto.GenericDataDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 @Service(value = "dashboardService")
 public class DashboardServiceImpl implements DashboardService {
@@ -33,7 +33,7 @@ public class DashboardServiceImpl implements DashboardService {
   @Autowired private CustomerRepository customerRepository;
   @Autowired EntityManager entityManager;
 
-  @CachePut(value = "dashboard", key="#id")
+  @CachePut(value = "dashboard", key = "#id")
   public GenericDataDTO create(DashboardDTO dashboardDTO) {
     if (dashboardDTO.getCustomer() == null) {
       return new GenericDataDTO.Builder().display("Customer not found.").error(true).build();
@@ -61,7 +61,7 @@ public class DashboardServiceImpl implements DashboardService {
         .error(false)
         .build();
   }
-  
+
   @CacheEvict(value = "dashboard", key = "#id")
   public GenericDataDTO delete(String dashboardId) {
     UUID id = UUID.fromString(dashboardId);
@@ -73,7 +73,7 @@ public class DashboardServiceImpl implements DashboardService {
     throw new CustomException("Dashboard not found.", HttpStatus.NOT_FOUND);
   }
 
-  @Cacheable(value = "dashboard", key="#id")
+  @Cacheable(value = "dashboard", key = "#id")
   public List<GenericDataDTO> getAll() {
     List<GenericDataDTO> dtos = new ArrayList<GenericDataDTO>();
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();

@@ -14,12 +14,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import ml.vexlab.smartgrid.entity.Asset;
 import ml.vexlab.smartgrid.entity.Customer;
 import ml.vexlab.smartgrid.entity.Dashboard;
@@ -30,6 +24,12 @@ import ml.vexlab.smartgrid.repository.DashboardRepository;
 import ml.vexlab.smartgrid.service.CustomerService;
 import ml.vexlab.smartgrid.transport.dto.CustomerDTO;
 import ml.vexlab.smartgrid.transport.dto.GenericDataDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 @Service(value = "customerService")
 public class CustomerServiceImpl implements CustomerService {
@@ -39,7 +39,7 @@ public class CustomerServiceImpl implements CustomerService {
   @Autowired private CustomerRepository customerRepository;
   @Autowired EntityManager entityManager;
 
-  @CachePut(value = "customer", key="#id")
+  @CachePut(value = "customer", key = "#id")
   public GenericDataDTO create(CustomerDTO customerDTO) {
     Customer c = new Customer();
     if (customerDTO.getId() != null) {
@@ -102,7 +102,7 @@ public class CustomerServiceImpl implements CustomerService {
         .build();
   }
 
-  @Cacheable(value = "customer", key="#id")
+  @Cacheable(value = "customer", key = "#id")
   public List<GenericDataDTO> getAll() {
     List<GenericDataDTO> dtos = new ArrayList<GenericDataDTO>();
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();

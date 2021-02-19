@@ -14,12 +14,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import ml.vexlab.smartgrid.entity.Alarm;
 import ml.vexlab.smartgrid.entity.Asset;
 import ml.vexlab.smartgrid.entity.Device;
@@ -32,6 +26,12 @@ import ml.vexlab.smartgrid.repository.DeviceTypeRepository;
 import ml.vexlab.smartgrid.service.DeviceService;
 import ml.vexlab.smartgrid.transport.dto.DeviceDTO;
 import ml.vexlab.smartgrid.transport.dto.GenericDataDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 @Service(value = "deviceService")
 public class DeviceServiceImpl implements DeviceService {
@@ -42,7 +42,7 @@ public class DeviceServiceImpl implements DeviceService {
   @Autowired private AlarmRepository alarmRepository;
   @Autowired EntityManager entityManager;
 
-  @CachePut(value = "dashboard", key="#id")
+  @CachePut(value = "dashboard", key = "#id")
   public GenericDataDTO create(DeviceDTO deviceDTO) {
     if (deviceDTO.getAsset() == null) {
       return new GenericDataDTO.Builder().display("Asset not found.").error(true).build();
@@ -132,7 +132,7 @@ public class DeviceServiceImpl implements DeviceService {
     throw new CustomException("Device not found.", HttpStatus.NOT_FOUND);
   }
 
-  @Cacheable(value = "device", key="#id")
+  @Cacheable(value = "device", key = "#id")
   public List<GenericDataDTO> getAll() {
     List<GenericDataDTO> dtos = new ArrayList<GenericDataDTO>();
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
